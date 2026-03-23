@@ -20,7 +20,7 @@ export default function Transaction() {
       try {
         const res = await axios.get("http://localhost:6087/transactions")
         setTransactions(res.data)
-      } catch (err) {
+      } catch {
         toast.error("Failed to fetch transactions")
       }
     }
@@ -32,66 +32,82 @@ export default function Transaction() {
       return toast.error("Fill all required fields!")
 
     const toastId = toast.loading("Adding transaction...")
+
     try {
       const res = await axios.post("http://localhost:6087/transactions", form)
       setTransactions([...transactions, res.data])
-      setForm({ type: "expense", amount: "", category: "", date: "", description: "" })
+      setForm({
+        type: "expense",
+        amount: "",
+        category: "",
+        date: "",
+        description: "",
+      })
       setShowForm(false)
       toast.success("Transaction added!", { id: toastId })
-    } catch (err) {
+    } catch {
       toast.error("Failed to add transaction", { id: toastId })
     }
   }
 
   const handleUpdate = async (t) => {
-    const newAmount = editAmounts[t._id]
-    if (!newAmount) return toast.error("Enter amount first!")
+    const amount = editAmounts[t._id]
+    if (!amount) return toast.error("Enter amount!")
 
-    const updatedTransaction = { ...t, amount: Number(newAmount) }
     const toastId = toast.loading("Updating transaction...")
 
     try {
-      const res = await axios.put(`http://localhost:6087/transactions/${t._id}`, updatedTransaction)
+      const res = await axios.put(
+        `http://localhost:6087/transactions/${t._id}`,
+        { ...t, amount: Number(amount) }
+      )
+
       setTransactions((prev) =>
         prev.map((tr) => (tr._id === res.data._id ? res.data : tr))
       )
+
       setEditAmounts((prev) => ({ ...prev, [t._id]: "" }))
+
       toast.success("Transaction updated!", { id: toastId })
-    } catch (err) {
+    } catch {
       toast.error("Failed to update transaction", { id: toastId })
     }
   }
 
- const handleDelete = async (id) => {
+  const handleDelete = async (id) => {
     const toastId = toast.loading("Deleting transaction...")
+
     try {
       await axios.delete(`http://localhost:6087/transactions/${id}`)
       setTransactions((prev) => prev.filter((t) => t._id !== id))
       toast.success("Transaction deleted!", { id: toastId })
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete transaction", { id: toastId })
     }
   }
 
-
   const income = transactions
     .filter((t) => t.type === "income")
     .reduce((a, b) => a + Number(b.amount), 0)
+
   const expense = transactions
     .filter((t) => t.type === "expense")
     .reduce((a, b) => a + Number(b.amount), 0)
-  const balance = income - expense;
+
+  const balance = income - expense
 
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center" />
+
       <div className="container">
-        
+
         <div className="header-box">
           <div className="header">
             <div className="header-text">
               <h1>Transactions</h1>
             </div>
+
             <button className="add-btn" onClick={() => setShowForm(!showForm)}>
               + Add Transaction
             </button>
@@ -102,10 +118,12 @@ export default function Transaction() {
               <p>TOTAL INCOME</p>
               <h2>${income}</h2>
             </div>
+
             <div className="card expense">
               <p>TOTAL EXPENSES</p>
               <h2>${expense}</h2>
             </div>
+
             <div className="card balance">
               <p>NET BALANCE</p>
               <h2>${balance}</h2>
@@ -113,12 +131,12 @@ export default function Transaction() {
           </div>
         </div>
 
-      
         {showForm && (
           <div className="form">
             <div className="form-header">
               <h3>+ New Transaction</h3>
             </div>
+
             <div className="form-body">
               <div className="row">
                 <div className="field">
@@ -131,8 +149,9 @@ export default function Transaction() {
                     <option value="income">Income</option>
                   </select>
                 </div>
+
                 <div className="field">
-                  <label>Amount ($) *</label>
+                  <label>Amount *</label>
                   <input
                     type="number"
                     value={form.amount}
@@ -149,6 +168,7 @@ export default function Transaction() {
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
                   />
                 </div>
+
                 <div className="field">
                   <label>Date *</label>
                   <input
@@ -163,10 +183,13 @@ export default function Transaction() {
                 <label>Description</label>
                 <textarea
                   value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, description: e.target.value })
+                  }
                 />
               </div>
             </div>
+
             <div className="form-footer">
               <button className="cancel-btn" onClick={() => setShowForm(false)}>
                 Cancel
@@ -180,13 +203,17 @@ export default function Transaction() {
 
         <div className="history">
           <h3>Transaction History</h3>
+
           {transactions.length === 0 ? (
             <p className="empty">No transactions found</p>
           ) : (
             transactions.map((t) => (
               <div key={t._id} className="history-item">
                 <div className="left">
-                  <div className="icon">{t.type === "expense" ? "↘" : "↗"}</div>
+                  <div className="icon">
+                    {t.type === "expense" ? "↘" : "↗"}
+                  </div>
+
                   <div className="details">
                     <div className="top">
                       <span className="title">{t.category}</span>
@@ -195,26 +222,39 @@ export default function Transaction() {
                     <small>{t.date}</small>
                   </div>
                 </div>
+
                 <div className="right">
                   <span className={t.type === "expense" ? "amt red" : "amt green"}>
                     {t.type === "expense" ? "-" : "+"}${t.amount}
                   </span>
 
-                
-                  <div style={{ display: "flex", gap: "6px", marginTop: "10px" }}>
+                  <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
                     <input
                       type="number"
                       placeholder="Edit amount"
                       value={editAmounts[t._id] || ""}
                       onChange={(e) =>
-                        setEditAmounts((prev) => ({ ...prev, [t._id]: e.target.value }))
+                        setEditAmounts((prev) => ({
+                          ...prev,
+                          [t._id]: e.target.value,
+                        }))
                       }
-                      style={{ flex: 1 }}
+                      style={{ flex: 1, padding: "6px", fontSize: "14px" }}
                     />
-                    <button className="savings-btn" onClick={() => handleUpdate(t)}>
+
+                    <button
+                      className="savings-btn"
+                      style={{ width: "80px", padding: "6px 0" }}
+                      onClick={() => handleUpdate(t)}
+                    >
                       Update
                     </button>
-                    <button className="cancel-btn" onClick={() => handleDelete(t._id)}>
+
+                    <button
+                      className="cancel-btn"
+                      style={{ width: "80px", padding: "6px 0" }}
+                      onClick={() => handleDelete(t._id)}
+                    >
                       Delete
                     </button>
                   </div>
@@ -223,6 +263,7 @@ export default function Transaction() {
             ))
           )}
         </div>
+
       </div>
     </>
   )

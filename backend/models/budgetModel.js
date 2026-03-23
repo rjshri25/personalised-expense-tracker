@@ -6,6 +6,11 @@ const budgetSchema = new mongoose.Schema({
   spent: { type: Number, default: 0 },
   month: { type: String, required: true },
   progress: { type: Number, default: 0 },
-});
+  status: {
+    type: String,
+    enum: ["safe", "warning", "overspent"],
+    default: "safe",
+  },
+})
 
 module.exports = mongoose.model("Budget", budgetSchema)

@@ -1,100 +1,93 @@
-import { useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
-import "./styles.css";
+import { useState, useEffect } from "react"
+import toast, { Toaster } from "react-hot-toast"
+import axios from "axios"
+import "./styles.css"
 
 export default function Budget() {
-  const [showForm, setShowForm] = useState(false);
-  const [budgets, setBudgets] = useState([]);
+  const [showForm, setShowForm] = useState(false)
+  const [budgets, setBudgets] = useState([])
   const [form, setForm] = useState({
     category: "",
     limit: "",
     spent: "",
     month: "",
   });
-  const [addSpent, setAddSpent] = useState({});
+  const [addSpent, setAddSpent] = useState({})
 
   useEffect(() => {
     const fetchBudgets = async () => {
       try {
-        const res = await axios.get("http://localhost:6087/budgets");
+        const res = await axios.get("http://localhost:6087/budgets")
         setBudgets(res.data);
       } catch {
-        toast.error("Failed to fetch budgets");
+        toast.error("Failed to fetch budgets")
       }
-    };
-    fetchBudgets();
-  }, []);
+    }
+    fetchBudgets()
+  }, [])
 
   const handleAdd = async () => {
-    if (!form.category || !form.limit || !form.month) {
-      toast.error("Fill required fields!");
-      return;
-    }
+    if (!form.category || !form.limit || !form.month)
+      return toast.error("Fill all required fields!")
 
-    const toastId = toast.loading("Adding budget...");
+    const toastId = toast.loading("Adding budget...")
 
     try {
-      const res = await axios.post("http://localhost:6087/budgets", form);
-      setBudgets([...budgets, res.data]);
-      setForm({ category: "", limit: "", spent: "", month: "" });
-      setShowForm(false);
-      toast.success("Budget added!", { id: toastId });
+      const res = await axios.post("http://localhost:6087/budgets", form)
+      setBudgets([...budgets, res.data])
+      setForm({ category: "", limit: "", spent: "", month: "" })
+      setShowForm(false)
+      toast.success("Budget added!", { id: toastId })
     } catch {
-      toast.error("Failed to add budget", { id: toastId });
+      toast.error("Failed to add budget", { id: toastId })
     }
-  };
+  }
 
-  const handleAddSpent = async (b) => {
-    const amount = addSpent[b._id];
-    if (!amount) {
-      toast.error("Enter amount!");
-      return;
-    }
+  const handleUpdate = async (b) => {
+    const amount = addSpent[b._id]
+    if (!amount) return toast.error("Enter an amount first!")
 
-    const toastId = toast.loading("Updating...");
+    const toastId = toast.loading("Updating budget...")
 
     try {
       const res = await axios.put(
         `http://localhost:6087/budgets/${b._id}`,
         { spent: amount }
-      );
+      )
 
       setBudgets((prev) =>
         prev.map((item) => (item._id === res.data._id ? res.data : item))
-      );
+      )
 
-      setAddSpent((prev) => ({ ...prev, [b._id]: "" }));
+      setAddSpent((prev) => ({ ...prev, [b._id]: "" }))
 
-      if (res.data.status === "overspent") {
-        toast.error("Overspending!");
-      } else if (res.data.status === "warning") {
-        toast("Near budget limit!", { icon: "⚠" });
+      if (res.data.progress > 100) {
+        toast.error("Overspending!", { id: toastId })
+      } else {
+        toast.success("Budget updated!", { id: toastId })
       }
-
-      toast.success("Updated!", { id: toastId });
     } catch {
-      toast.error("Update failed", { id: toastId });
+      toast.error("Failed to update budget", { id: toastId })
     }
-  };
+  }
 
   const handleDelete = async (id) => {
-    const toastId = toast.loading("Deleting...");
-
+    const toastId = toast.loading("Deleting budget...")
     try {
-      await axios.delete(`http://localhost:6087/budgets/${id}`);
-      setBudgets((prev) => prev.filter((b) => b._id !== id));
-      toast.success("Deleted!", { id: toastId });
+      await axios.delete(`http://localhost:6087/budgets/${id}`)
+      setBudgets((prev) => prev.filter((b) => b._id !== id))
+      toast.success("Budget deleted!", { id: toastId })
     } catch {
-      toast.error("Delete failed", { id: toastId });
+      toast.error("Failed to delete budget", { id: toastId })
     }
-  };
+  }
 
   return (
     <>
       <Toaster position="top-center" />
 
       <div className="container">
+
         <div className="header-box">
           <div className="header">
             <div className="header-text">
@@ -182,39 +175,16 @@ export default function Budget() {
               <div key={b._id} className="budget-card">
                 <h3>{b.category}</h3>
 
-                <p
-                  style={{
-                    color:
-                      b.status === "overspent"
-                        ? "red"
-                        : b.status === "warning"
-                        ? "orange"
-                        : "green",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {b.status === "overspent"
-                    ? "Overspending!"
-                    : b.status === "warning"
-                    ? "Near limit"
-                    : "Safe"}
-                </p>
-
                 <p className="budget-progress-text">
-                  Used <span>{b.progress}%</span>
+                  Used <span>{b.progress.toFixed(1)}%</span>
                 </p>
 
                 <div className="budget-progress-bar">
                   <div
                     className="budget-progress-fill"
                     style={{
-                      width: `${b.progress}%`,
-                      background:
-                        b.status === "overspent"
-                          ? "red"
-                          : b.status === "warning"
-                          ? "orange"
-                          : "green",
+                      width: `${Math.min(b.progress, 100)}%`,
+                      background: b.progress > 100 ? "red" : "#4caf50",
                     }}
                   ></div>
                 </div>
@@ -222,7 +192,7 @@ export default function Budget() {
                 <div className="budget-amounts">
                   <div>
                     <p>Spent</p>
-                    <h4>${b.spent}</h4>
+                    <h4>${b.spent || 0}</h4>
                   </div>
                   <div>
                     <p>Limit</p>
@@ -232,10 +202,17 @@ export default function Budget() {
 
                 <div className="budget-date">{b.month}</div>
 
-                <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "8px",
+                    marginTop: "10px",
+                    alignItems: "center",
+                  }}
+                >
                   <input
                     type="number"
-                    placeholder="Add spent"
+                    placeholder="Add amount"
                     value={addSpent[b._id] || ""}
                     onChange={(e) =>
                       setAddSpent((prev) => ({
@@ -243,18 +220,25 @@ export default function Budget() {
                         [b._id]: e.target.value,
                       }))
                     }
-                    style={{ flex: 1 }}
+                    style={{
+                      flex: 1,
+                      padding: "6px",
+                      fontSize: "14px",
+                      width: "60px",
+                    }}
                   />
 
                   <button
                     className="savings-btn"
-                    onClick={() => handleAddSpent(b)}
+                    style={{ width: "80px", padding: "6px 0" }}
+                    onClick={() => handleUpdate(b)}
                   >
-                    Add
+                    + Add
                   </button>
 
                   <button
                     className="cancel-btn"
+                    style={{ width: "80px", padding: "6px 0" }}
                     onClick={() => handleDelete(b._id)}
                   >
                     Delete
@@ -264,7 +248,8 @@ export default function Budget() {
             ))
           )}
         </div>
+
       </div>
     </>
-  );
+  )
 }

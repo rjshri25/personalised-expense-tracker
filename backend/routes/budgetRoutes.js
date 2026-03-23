@@ -2,12 +2,23 @@ const express = require("express")
 const router = express.Router()
 const Budget = require("../models/budgetModel")
 
+const calculateProgress = (spent, limit) => {
+  if (!limit || limit <= 0) return 0
+  return ((spent || 0) / limit) * 100
+}
+
+const getStatus = (spent, limit) => {
+  if (spent > limit) return "overspent"
+  if (spent > 0.8 * limit) return "warning"
+  return "safe"
+}
+
 router.get("/", async (req, res) => {
   try {
     const budgets = await Budget.find()
     res.json(budgets)
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch budgets" });
+  } catch {
+    res.status(500).json({ message: "Failed to fetch budgets" })
   }
 })
 
@@ -15,8 +26,8 @@ router.post("/", async (req, res) => {
   try {
     const { category, limit, spent, month } = req.body
 
-    const progress =
-      limit > 0 ? ((Number(spent || 0) / Number(limit)) * 100).toFixed(1) : 0
+    const progress = calculateProgress(spent, limit)
+    const status = getStatus(spent, limit)
 
     const newBudget = new Budget({
       category,
@@ -24,49 +35,48 @@ router.post("/", async (req, res) => {
       spent: spent || 0,
       month,
       progress,
+      status,
     })
 
     const saved = await newBudget.save()
     res.json(saved)
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to create budget" })
   }
 })
 
-
 router.put("/:id", async (req, res) => {
   try {
-    const { spent } = req.body
+    const existing = await Budget.findById(req.params.id);
 
-    const budget = await Budget.findById(req.params.id)
-    if (!budget) {
-      return res.status(404).json({ message: "Budget not found" })
-    }
+    const addedSpent = Number(req.body.spent || 0)
+    const newSpent = Number(existing.spent || 0) + addedSpent
 
-    const newSpent = Number(budget.spent || 0) + Number(spent || 0)
+    const progress = calculateProgress(newSpent, existing.limit)
+    const status = getStatus(newSpent, existing.limit)
 
-    const progress =
-      budget.limit > 0
-        ? ((newSpent / budget.limit) * 100).toFixed(1)
-        : 0
+    const updated = await Budget.findByIdAndUpdate(
+      req.params.id,
+      {
+        spent: newSpent,
+        progress,
+        status,
+      },
+      { new: true }
+    )
 
-    budget.spent = newSpent
-    budget.progress = progress
-
-    const updated = await budget.save()
     res.json(updated)
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to update budget" })
   }
 })
 
-
 router.delete("/:id", async (req, res) => {
   try {
     await Budget.findByIdAndDelete(req.params.id)
-    res.json({ message: "Budget deleted" })
-  } catch (err) {
-    res.status(500).json({ message: "Failed to delete budget" })
+    res.json({ message: "Deleted" })
+  } catch {
+    res.status(500).json({ message: "Failed to delete" })
   }
 })
 
