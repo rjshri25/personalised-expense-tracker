@@ -116,17 +116,17 @@ export default function Transaction() {
           <div className="cards">
             <div className="card income">
               <p>TOTAL INCOME</p>
-              <h2>${income}</h2>
+              <h2>₹{income}</h2>
             </div>
 
             <div className="card expense">
               <p>TOTAL EXPENSES</p>
-              <h2>${expense}</h2>
+              <h2>₹{expense}</h2>
             </div>
 
             <div className="card balance">
               <p>NET BALANCE</p>
-              <h2>${balance}</h2>
+              <h2>₹{balance}</h2>
             </div>
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function Transaction() {
         )}
 
         <div className="history">
-          <h3>Transaction History</h3>
+          <h4>Transaction History</h4>
 
           {transactions.length === 0 ? (
             <p className="empty">No transactions found</p>
@@ -225,7 +225,7 @@ export default function Transaction() {
 
                 <div className="right">
                   <span className={t.type === "expense" ? "amt red" : "amt green"}>
-                    {t.type === "expense" ? "-" : "+"}${t.amount}
+                    {t.type === "expense" ? "-" : "+"}₹{t.amount}
                   </span>
 
                   <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>

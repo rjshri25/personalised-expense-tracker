@@ -192,11 +192,11 @@ export default function Budget() {
                 <div className="budget-amounts">
                   <div>
                     <p>Spent</p>
-                    <h4>${b.spent || 0}</h4>
+                    <h4>₹{b.spent || 0}</h4>
                   </div>
                   <div>
                     <p>Limit</p>
-                    <h4>${b.limit}</h4>
+                    <h4>₹{b.limit}</h4>
                   </div>
                 </div>
 

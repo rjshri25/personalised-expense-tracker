@@ -14,13 +14,13 @@ export default function Login() {
     formState: { errors }
   } = useForm()
 
-  // 🔑 SIMULATION LOGIN
+  
   const onFormSubmit = () => {
     toast.loading('Logging in...', { id: 'login' })
 
     setTimeout(() => {
       toast.success('Login successful', { id: 'login' })
-      navigate('/dashboard') // ✅ THIS is what you want
+      navigate('/dashboard') 
     }, 1000)
   }
 

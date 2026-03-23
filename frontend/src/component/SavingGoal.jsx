@@ -172,11 +172,11 @@ export default function SavingGoals() {
                 <div className="savings-amounts">
                   <div>
                     <p>Current</p>
-                    <h4>${g.current || 0}</h4>
+                    <h4>₹{g.current || 0}</h4>
                   </div>
                   <div>
                     <p>Target</p>
-                    <h4>${g.target}</h4>
+                    <h4>₹{g.target}</h4>
                   </div>
                 </div>
                 <div className="savings-date">
