@@ -16,6 +16,12 @@ server.use(cors())
 const goalRoutes=require('./routes/goalRoutes')
 server.use("/goals", goalRoutes)
 
+const transactionRoutes=require('./routes/transactionRoutes')
+server.use("/transactions", transactionRoutes)
+
+const budgetRoutes = require("./routes/budgetRoutes")
+server.use("/budgets", budgetRoutes)
+
 server.listen(6087,
     ()=>
     {

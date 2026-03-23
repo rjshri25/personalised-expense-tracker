@@ -1,98 +1,95 @@
-import { useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
-import "./styles.css";
+import { useState, useEffect } from "react"
+import toast, { Toaster } from "react-hot-toast"
+import axios from "axios"
+import "./styles.css"
 
 export default function SavingGoals() {
-  const [showForm, setShowForm] = useState(false);
-  const [goals, setGoals] = useState([]);
+  const [showForm, setShowForm] = useState(false)
+  const [goals, setGoals] = useState([])
   const [form, setForm] = useState({
     title: "",
     target: "",
     current: "",
     date: "",
-  });
-  const [addAmounts, setAddAmounts] = useState({}); // stores input for each goal
-
-  // Fetch goals from backend
+  })
+  const [addAmounts, setAddAmounts] = useState({})
   useEffect(() => {
     const fetchGoals = async () => {
       try {
-        const res = await axios.get("http://localhost:6087/goals");
-        setGoals(res.data);
+        const res = await axios.get("http://localhost:6087/goals")
+        setGoals(res.data)
       } catch (err) {
-        toast.error("Failed to fetch goals");
+        toast.error("Failed to fetch goals")
       }
-    };
-    fetchGoals();
-  }, []);
+    }
+    fetchGoals()
+  }, [])
 
-  // Add new goal
+
   const handleAdd = async () => {
     if (!form.title || !form.target || !form.date)
-      return toast.error("Fill all required fields!");
+      return toast.error("Fill all required fields!")
 
     const progress =
       form.target > 0
         ? ((Number(form.current) / Number(form.target)) * 100).toFixed(1)
-        : 0;
+        : 0
 
-    const newGoal = { ...form, progress };
+    const newGoal = { ...form, progress }
 
-    const toastId = toast.loading("Adding goal...");
+    const toastId = toast.loading("Adding goal...")
     try {
-      const res = await axios.post("http://localhost:6087/goals", newGoal);
+      const res = await axios.post("http://localhost:6087/goals", newGoal)
       setGoals([...goals, res.data]);
-      setForm({ title: "", target: "", current: "", date: "" });
-      setShowForm(false);
-      toast.success("Goal added!", { id: toastId });
+      setForm({ title: "", target: "", current: "", date: "" })
+      setShowForm(false)
+      toast.success("Goal added!", { id: toastId })
     } catch (err) {
-      toast.error("Failed to add goal", { id: toastId });
+      toast.error("Failed to add goal", { id: toastId })
     }
-  };
+  }
 
-  // Add money to a goal
+  
   const handleUpdate = async (goal) => {
-    const amount = addAmounts[goal._id];
-    if (!amount) return toast.error("Enter an amount first!");
+    const amount = addAmounts[goal._id]
+    if (!amount) return toast.error("Enter an amount first!")
 
-    const newCurrent = Number(goal.current || 0) + Number(amount);
-    const progress = ((newCurrent / goal.target) * 100).toFixed(1);
-    const toastId = toast.loading("Updating goal...");
+    const newCurrent = Number(goal.current || 0) + Number(amount)
+    const progress = ((newCurrent / goal.target) * 100).toFixed(1)
+    const toastId = toast.loading("Updating goal...")
 
     try {
       const res = await axios.put(`http://localhost:6087/goals/${goal._id}`, {
         ...goal,
         current: newCurrent,
         progress,
-      });
+      })
       setGoals((prev) =>
         prev.map((g) => (g._id === res.data._id ? res.data : g))
-      );
-      setAddAmounts((prev) => ({ ...prev, [goal._id]: "" }));
-      toast.success("Goal updated!", { id: toastId });
+      )
+      setAddAmounts((prev) => ({ ...prev, [goal._id]: "" }))
+      toast.success("Goal updated!", { id: toastId })
     } catch (err) {
-      toast.error("Failed to update goal", { id: toastId });
+      toast.error("Failed to update goal", { id: toastId })
     }
-  };
+  }
 
-  // Delete a goal
   const handleDelete = async (id) => {
-    const toastId = toast.loading("Deleting goal...");
+    const toastId = toast.loading("Deleting goal...")
     try {
-      await axios.delete(`http://localhost:6087/goals/${id}`);
-      setGoals((prev) => prev.filter((g) => g._id !== id));
-      toast.success("Goal deleted!", { id: toastId });
+      await axios.delete(`http://localhost:6087/goals/${id}`)
+      setGoals((prev) => prev.filter((g) => g._id !== id))
+      toast.success("Goal deleted!", { id: toastId })
     } catch (err) {
-      toast.error("Failed to delete goal", { id: toastId });
+      toast.error("Failed to delete goal", { id: toastId })
     }
-  };
+  }
 
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
       <div className="container">
-        {/* Header */}
+     
         <div className="header-box">
           <div className="header">
             <div className="header-text">
@@ -104,8 +101,6 @@ export default function SavingGoals() {
             </button>
           </div>
         </div>
-
-        {/* Form */}
         {showForm && (
           <div className="form">
             <div className="form-header">
@@ -158,8 +153,6 @@ export default function SavingGoals() {
             </div>
           </div>
         )}
-
-        {/* Goals list */}
         <div className="savings-cards">
           {goals.length === 0 ? (
             <p className="empty">No goals added</p>
@@ -189,8 +182,6 @@ export default function SavingGoals() {
                 <div className="savings-date">
                   <span>{g.date}</span>
                 </div>
-
-                {/* Add money input + buttons */}
                 <div
                   style={{
                     display: "flex",
@@ -248,5 +239,5 @@ export default function SavingGoals() {
         </div>
       </div>
     </>
-  );
+  )
 }
