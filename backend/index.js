@@ -13,6 +13,12 @@ const server=express()
 server.use(bodyParser.json())
 server.use(cors())
 
+const registerRoute=require('./routes/registerRoute')
+server.use("/register", registerRoute)
+
+const loginRoute = require("./routes/loginRoute")
+server.use("/login", loginRoute)
+
 const goalRoutes=require('./routes/goalRoutes')
 server.use("/goals", goalRoutes)
 
@@ -21,6 +27,7 @@ server.use("/transactions", transactionRoutes)
 
 const budgetRoutes = require("./routes/budgetRoutes")
 server.use("/budgets", budgetRoutes)
+
 
 server.listen(6087,
     ()=>

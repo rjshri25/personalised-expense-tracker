@@ -3,7 +3,6 @@ const router = express.Router()
 
 const SavingGoal = require("../models/SavingGoal")
 
-
 router.get("/", async (req, res) => {
   const goals = await SavingGoal.find();
   res.json(goals);

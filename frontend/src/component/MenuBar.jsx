@@ -1,12 +1,12 @@
-import './styles.css';
-import { useNavigate, useLocation } from "react-router-dom";
+import './styles.css'
+import { useNavigate, useLocation } from "react-router-dom"
 
 export default function MenuBar() {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate = useNavigate()
+  const location = useLocation()
 
   function isActive(path) {
-    return location.pathname === path;
+    return location.pathname === path
   }
 
   return (
@@ -68,5 +68,5 @@ export default function MenuBar() {
 
       </div>
     </div>
-  );
+  )
 }
