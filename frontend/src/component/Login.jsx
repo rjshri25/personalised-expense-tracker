@@ -27,8 +27,11 @@ export default function Login() {
       if (resData.status) {
         toast.success(resData.message, { id: "login" });
 
-        // Optional: save user info locally
+        // Save full user info
         localStorage.setItem("user", JSON.stringify(resData.user));
+
+        // Save userId separately for transactions
+        localStorage.setItem("userId", resData.user._id);
 
         reset(); // reset form fields
         navigate("/dashboard"); // navigate on success

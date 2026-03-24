@@ -11,26 +11,26 @@ router.post("/", async (req, res) => {
     return res.send({ status: false, message: "All fields required" })
 
   if (password !== confirmpassword)
-    return res.send({ status: false, message: "Passwords do not match" });
+    return res.send({ status: false, message: "Passwords do not match" })
 
   try {
-    const existing = await User.findOne({ email });
+    const existing = await User.findOne({ email })
 
     if (existing)
-      return res.send({ status: false, message: "user exists!!" });
+      return res.send({ status: false, message: "user exists!!" })
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10)
 
     await User.create({
       fullName,
       email,
       password: hashedPassword
-    });
+    })
 
-    res.send({ status: true, message: "User registered successfully" });
+    res.send({ status: true, message: "User registered successfully" })
 
   } catch {
-    res.send({ status: false, message: "Registration failed" });
+    res.send({ status: false, message: "Registration failed" })
   }
 })
 
