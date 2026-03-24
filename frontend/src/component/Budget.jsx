@@ -1,108 +1,104 @@
-import { useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
-import "./styles.css";
+import { useState, useEffect } from "react"
+import toast, { Toaster } from "react-hot-toast"
+import axios from "axios"
+import "./styles.css"
 
 export default function Budget() {
-  const [showForm, setShowForm] = useState(false);
-  const [budgets, setBudgets] = useState([]);
+  const [showForm, setShowForm] = useState(false)
+  const [budgets, setBudgets] = useState([])
   const [form, setForm] = useState({
     category: "",
     limit: "",
     spent: "",
     month: "",
-  });
-  const [addSpent, setAddSpent] = useState({});
-
-  // Get logged-in userId from localStorage
-  const userId = JSON.parse(localStorage.getItem("user"))?._id;
-
+  })
+  const [addSpent, setAddSpent] = useState({})
+  const userId = JSON.parse(localStorage.getItem("user"))?._id
   useEffect(() => {
-    if (!userId) return toast.error("Please login first");
+    if (!userId) return toast.error("Please login first")
 
     const fetchBudgets = async () => {
       try {
-        const res = await axios.get(`http://localhost:6087/budgets/${userId}`);
-        if (res.data.status) setBudgets(res.data.budgets);
-        else toast.error(res.data.message);
+        const res = await axios.get(`http://localhost:6087/budgets/${userId}`)
+        if (res.data.status) setBudgets(res.data.budgets)
+        else toast.error(res.data.message)
       } catch {
-        toast.error("Failed to fetch budgets");
+        toast.error("Failed to fetch budgets")
       }
-    };
+    }
 
-    fetchBudgets();
-  }, [userId]);
+    fetchBudgets()
+  }, [userId])
 
   const handleAdd = async () => {
     if (!form.category || !form.limit || !form.month)
-      return toast.error("Fill all required fields!");
+      return toast.error("Fill all required fields!")
 
-    if (!userId) return toast.error("User not logged in");
+    if (!userId) return toast.error("User not logged in")
 
-    const toastId = toast.loading("Adding budget...");
-
+    const toastId = toast.loading("Adding budget...")
     try {
       const res = await axios.post("http://localhost:6087/budgets", {
         ...form,
         userId,
-      });
+      })
+
       if (res.data.status) {
-        setBudgets([...budgets, res.data.budget]);
-        setForm({ category: "", limit: "", spent: "", month: "" });
-        setShowForm(false);
-        toast.success("Budget added!", { id: toastId });
+        setBudgets([...budgets, res.data.budget])
+        setForm({ category: "", limit: "", spent: "", month: "" })
+        setShowForm(false)
+        toast.success("Budget added!", { id: toastId })
       } else {
-        toast.error(res.data.message, { id: toastId });
+        toast.error(res.data.message, { id: toastId })
       }
     } catch {
-      toast.error("Failed to add budget", { id: toastId });
+      toast.error("Failed to add budget", { id: toastId })
     }
-  };
+  }
 
   const handleUpdate = async (b) => {
-    const amount = addSpent[b._id];
-    if (!amount) return toast.error("Enter an amount first!");
-    if (!userId) return toast.error("User not logged in");
+    const amount = addSpent[b._id]
+    if (!amount) return toast.error("Enter an amount first!")
+    if (!userId) return toast.error("User not logged in")
 
-    const toastId = toast.loading("Updating budget...");
+    const toastId = toast.loading("Updating budget...")
 
     try {
       const res = await axios.put(`http://localhost:6087/budgets/${b._id}`, {
         spent: amount,
         userId,
-      });
+      })
 
       if (res.data.status) {
         setBudgets((prev) =>
           prev.map((item) => (item._id === res.data.budget._id ? res.data.budget : item))
-        );
-        setAddSpent((prev) => ({ ...prev, [b._id]: "" }));
+        )
+        setAddSpent((prev) => ({ ...prev, [b._id]: "" }))
 
         if (res.data.budget.progress > 100) {
-          toast.error("Overspending!", { id: toastId });
+          toast.error("Overspending!", { id: toastId })
         } else {
-          toast.success("Budget updated!", { id: toastId });
+          toast.success("Budget updated!", { id: toastId })
         }
       } else {
-        toast.error(res.data.message, { id: toastId });
+        toast.error(res.data.message, { id: toastId })
       }
     } catch {
-      toast.error("Failed to update budget", { id: toastId });
+      toast.error("Failed to update budget", { id: toastId })
     }
-  };
+  }
 
   const handleDelete = async (id) => {
-    if (!userId) return toast.error("User not logged in");
-    const toastId = toast.loading("Deleting budget...");
-
+    if (!userId) return toast.error("User not logged in")
+    const toastId = toast.loading("Deleting budget...")
     try {
-      await axios.delete(`http://localhost:6087/budgets/${id}/${userId}`);
-      setBudgets((prev) => prev.filter((b) => b._id !== id));
-      toast.success("Budget deleted!", { id: toastId });
+      await axios.delete(`http://localhost:6087/budgets/${id}/${userId}`)
+      setBudgets((prev) => prev.filter((b) => b._id !== id))
+      toast.success("Budget deleted!", { id: toastId })
     } catch {
-      toast.error("Failed to delete budget", { id: toastId });
+      toast.error("Failed to delete budget", { id: toastId })
     }
-  };
+  }
 
   return (
     <>

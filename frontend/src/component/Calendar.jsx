@@ -1,59 +1,60 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
-import "./styles.css";
+import React, { useState, useEffect } from "react"
+import axios from "axios"
+import toast, { Toaster } from "react-hot-toast"
+import "./styles.css"
 
-const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
 export default function Calendar() {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [transactions, setTransactions] = useState({});
+  const [currentDate, setCurrentDate] = useState(new Date())
+  const [transactions, setTransactions] = useState({})
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const today = new Date();
+  const year = currentDate.getFullYear()
+  const month = currentDate.getMonth()
+  const today = new Date()
 
-  // Get userId from localStorage
-  const userId = localStorage.getItem("userId");
+  
+  const userId = localStorage.getItem("userId")
 
   useEffect(() => {
     if (!userId) {
-      toast.error("Please login first");
-      return;
+      toast.error("Please login first")
+      return
     }
 
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:6087/transactions/calendar/${userId}`);
-        if (res.data.status) setTransactions(res.data.transactions);
-        else toast.error(res.data.message);
+        const res = await axios.get(`http://localhost:6087/transactions/calendar/${userId}`)
+        if (res.data.status) setTransactions(res.data.transactions)
+        else toast.error(res.data.message)
       } catch {
-        toast.error("Failed to load calendar");
+        toast.error("Failed to load calendar")
       }
-    };
-    fetchData();
-  }, [userId]);
+    }
 
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+    fetchData()
+  }, [userId])
 
-  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
-  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
-  const goToday = () => setCurrentDate(new Date());
+  const firstDay = new Date(year, month, 1).getDay()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
 
-  let incomeDays = 0;
-  let expenseDays = 0;
-  let noEntryDays = 0;
+  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1))
+  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1))
+  const goToday = () => setCurrentDate(new Date())
+
+  let incomeDays = 0
+  let expenseDays =0
+  let noEntryDays =0
 
   for (let i = 1; i <= daysInMonth; i++) {
-    const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
-    const data = transactions[key];
+    const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`
+    const data = transactions[key]
 
     if (data) {
-      if (data.income > 0) incomeDays++;
-      if (data.expense > 0) expenseDays++;
+      if (data.income > 0) incomeDays++
+      if (data.expense > 0) expenseDays++
     } else {
-      noEntryDays++;
+      noEntryDays++
     }
   }
 
@@ -111,7 +112,7 @@ export default function Calendar() {
                     <span className="no-entry">No entry</span>
                   )}
                 </div>
-              );
+              )
             })}
           </div>
         </div>
@@ -134,5 +135,5 @@ export default function Calendar() {
         </div>
       </div>
     </>
-  );
+  )
 }

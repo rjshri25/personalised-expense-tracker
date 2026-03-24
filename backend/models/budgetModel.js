@@ -1,8 +1,7 @@
-// backend/models/budgetModel.js
-const mongoose = require("mongoose");
+const mongoose = require("mongoose")
 
 const budgetSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // added user
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, 
   category: { type: String, required: true },
   limit: { type: Number, required: true },
   spent: { type: Number, default: 0 },
@@ -13,6 +12,6 @@ const budgetSchema = new mongoose.Schema({
     enum: ["safe", "warning", "overspent"],
     default: "safe",
   },
-});
+})
 
-module.exports = mongoose.model("Budget", budgetSchema);
+module.exports = mongoose.model("Budget", budgetSchema)

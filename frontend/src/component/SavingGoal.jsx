@@ -1,108 +1,107 @@
-import { useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
-import "./styles.css";
+import { useState, useEffect } from "react"
+import toast, { Toaster } from "react-hot-toast"
+import axios from "axios"
+import "./styles.css"
 
 export default function SavingGoals() {
-  const [showForm, setShowForm] = useState(false);
-  const [goals, setGoals] = useState([]);
+  const [showForm, setShowForm] = useState(false)
+  const [goals, setGoals] = useState([])
   const [form, setForm] = useState({
     title: "",
     target: "",
     current: "",
     date: "",
-  });
-  const [addAmounts, setAddAmounts] = useState({});
+  })
+  const [addAmounts, setAddAmounts] = useState({})
 
-  // Get userId from localStorage (stored during login)
-  const userId = localStorage.getItem("userId");
+  const userId = localStorage.getItem("userId")
 
   useEffect(() => {
     if (!userId) {
-      toast.error("Please login first");
-      return;
+      toast.error("Please login first")
+      return
     }
 
     const fetchGoals = async () => {
       try {
-        const res = await axios.get(`http://localhost:6087/goals/${userId}`);
-        if (res.data.status) setGoals(res.data.goals);
-        else toast.error(res.data.message);
+        const res = await axios.get(`http://localhost:6087/goals/${userId}`)
+        if (res.data.status) setGoals(res.data.goals)
+        else toast.error(res.data.message)
       } catch (err) {
-        toast.error("Failed to fetch goals");
+        toast.error("Failed to fetch goals")
       }
-    };
-    fetchGoals();
-  }, [userId]);
+    }
+    fetchGoals()
+  }, [userId])
 
   const handleAdd = async () => {
-    if (!form.title || !form.target || !form.date) return toast.error("Fill all required fields!");
-    if (!userId) return toast.error("User not logged in");
+    if (!form.title || !form.target || !form.date) return toast.error("Fill all required fields!")
+    if (!userId) return toast.error("User not logged in")
 
-    const progress = form.target > 0 ? ((Number(form.current) / Number(form.target)) * 100).toFixed(1) : 0;
+    const progress = form.target > 0 ? ((Number(form.current) / Number(form.target)) * 100).toFixed(1) : 0
 
-    const newGoal = { ...form, progress, userId };
+    const newGoal = { ...form, progress, userId }
 
-    const toastId = toast.loading("Adding goal...");
+    const toastId = toast.loading("Adding goal...")
     try {
-      const res = await axios.post("http://localhost:6087/goals", newGoal);
+      const res = await axios.post("http://localhost:6087/goals", newGoal)
       if (res.data.status) {
-        setGoals([...goals, res.data.goal]);
-        setForm({ title: "", target: "", current: "", date: "" });
-        setShowForm(false);
-        toast.success("Goal added!", { id: toastId });
+        setGoals([...goals, res.data.goal])
+        setForm({ title: "", target: "", current: "", date: "" })
+        setShowForm(false)
+        toast.success("Goal added!", { id: toastId })
       } else {
-        toast.error(res.data.message, { id: toastId });
+        toast.error(res.data.message, { id: toastId })
       }
     } catch (err) {
-      toast.error("Failed to add goal", { id: toastId });
+      toast.error("Failed to add goal", { id: toastId })
     }
-  };
+  }
 
   const handleUpdate = async (goal) => {
-    const amount = addAmounts[goal._id];
-    if (!amount) return toast.error("Enter an amount first!");
-    if (!userId) return toast.error("User not logged in");
+    const amount = addAmounts[goal._id]
+    if (!amount) return toast.error("Enter an amount first!")
+    if (!userId) return toast.error("User not logged in")
 
-    const newCurrent = Number(goal.current || 0) + Number(amount);
-    const progress = ((newCurrent / goal.target) * 100).toFixed(1);
+    const newCurrent = Number(goal.current || 0) + Number(amount)
+    const progress = ((newCurrent / goal.target) * 100).toFixed(1)
 
-    const toastId = toast.loading("Updating goal...");
+    const toastId = toast.loading("Updating goal...")
     try {
       const res = await axios.put(`http://localhost:6087/goals/${goal._id}`, {
         ...goal,
         current: newCurrent,
         progress,
         userId,
-      });
+      })
       if (res.data.status) {
-        setGoals((prev) => prev.map((g) => (g._id === res.data.goal._id ? res.data.goal : g)));
-        setAddAmounts((prev) => ({ ...prev, [goal._id]: "" }));
-        toast.success("Goal updated!", { id: toastId });
+        setGoals((prev) => prev.map((g) => (g._id === res.data.goal._id ? res.data.goal : g)))
+        setAddAmounts((prev) => ({ ...prev, [goal._id]: "" }))
+        toast.success("Goal updated!", { id: toastId })
       } else {
-        toast.error(res.data.message, { id: toastId });
+        toast.error(res.data.message, { id: toastId })
       }
     } catch (err) {
-      toast.error("Failed to update goal", { id: toastId });
+      toast.error("Failed to update goal", { id: toastId })
     }
-  };
+  }
 
   const handleDelete = async (id) => {
-    if (!userId) return toast.error("User not logged in");
+    if (!userId) return toast.error("User not logged in")
 
-    const toastId = toast.loading("Deleting goal...");
+    const toastId = toast.loading("Deleting goal...")
     try {
-      const res = await axios.delete(`http://localhost:6087/goals/${id}/${userId}`);
+      const res = await axios.delete(`http://localhost:6087/goals/${id}/${userId}`)
       if (res.data.status) {
-        setGoals((prev) => prev.filter((g) => g._id !== id));
-        toast.success("Goal deleted!", { id: toastId });
+        setGoals((prev) => prev.filter((g) => g._id !== id))
+        toast.success("Goal deleted!", { id: toastId })
       } else {
-        toast.error(res.data.message, { id: toastId });
+        toast.error(res.data.message, { id: toastId })
       }
     } catch (err) {
-      toast.error("Failed to delete goal", { id: toastId });
+      toast.error("Failed to delete goal", { id: toastId })
     }
-  };
+  }
 
   return (
     <>
@@ -120,7 +119,7 @@ export default function SavingGoals() {
           </div>
         </div>
 
-        {/* Goal Form */}
+  
         {showForm && (
           <div className="form">
             <div className="form-header">
@@ -159,7 +158,7 @@ export default function SavingGoals() {
           </div>
         )}
 
-        {/* Goals List */}
+      
         <div className="savings-cards">
           {goals.length === 0 ? (
             <p className="empty">No goals added</p>
@@ -207,5 +206,5 @@ export default function SavingGoals() {
         </div>
       </div>
     </>
-  );
+  )
 }

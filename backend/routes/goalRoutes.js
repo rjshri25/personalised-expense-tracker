@@ -4,7 +4,6 @@ const SavingGoal = require("../models/SavingGoal")
 
 router.get("/:userId", async (req, res) => {
   const { userId } = req.params
-
   try {
     const goals = await SavingGoal.find({ user: userId })
     res.json({ status: true, goals })

@@ -1,5 +1,5 @@
-import { Outlet } from "react-router-dom";
-import MenuBar from "./MenuBar";
+import { Outlet } from "react-router-dom"
+import MenuBar from "./MenuBar"
 export default function DashboardLayout() {
     return ( <>
    <div className="dashboard-layout">

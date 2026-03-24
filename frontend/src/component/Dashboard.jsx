@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react"
+import axios from "axios"
 import {
   PieChart,
   Pie,
@@ -11,22 +11,21 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-} from "recharts";
-import toast, { Toaster } from "react-hot-toast";
-import "./styles.css";
+} from "recharts"
+import toast, { Toaster } from "react-hot-toast"
+import "./styles.css"
 
 export default function Dashboard() {
-  const [transactions, setTransactions] = useState([]);
-  const [goals, setGoals] = useState([]);
-  const [budgets, setBudgets] = useState([]);
+  const [transactions, setTransactions] = useState([])
+  const [goals, setGoals] = useState([])
+  const [budgets, setBudgets] = useState([])
 
-  // Get logged-in userId
-  const userId = JSON.parse(localStorage.getItem("user"))?._id;
+  const userId = JSON.parse(localStorage.getItem("user"))?._id
 
   useEffect(() => {
     if (!userId) {
-      toast.error("Please login first");
-      return;
+      toast.error("Please login first")
+      return
     }
 
     const fetchData = async () => {
@@ -35,63 +34,62 @@ export default function Dashboard() {
           axios.get(`http://localhost:6087/transactions/${userId}`),
           axios.get(`http://localhost:6087/goals/${userId}`),
           axios.get(`http://localhost:6087/budgets/${userId}`),
-        ]);
+        ])
 
-        if (transRes.data.status) setTransactions(transRes.data.transactions || []);
-        else toast.error(transRes.data.message);
+        if (transRes.data.status) setTransactions(transRes.data.transactions || [])
+        else toast.error(transRes.data.message)
 
-        if (goalsRes.data.status) setGoals(goalsRes.data.goals || []);
-        else toast.error(goalsRes.data.message);
+        if (goalsRes.data.status) setGoals(goalsRes.data.goals || [])
+        else toast.error(goalsRes.data.message)
 
-        if (budgetsRes.data.status) setBudgets(budgetsRes.data.budgets || []);
-        else toast.error(budgetsRes.data.message);
+        if (budgetsRes.data.status) setBudgets(budgetsRes.data.budgets || [])
+        else toast.error(budgetsRes.data.message)
       } catch (err) {
-        console.error(err);
-        toast.error("Failed to fetch dashboard data");
+        console.error(err)
+        toast.error("Failed to fetch dashboard data")
       }
-    };
+    }
 
-    fetchData();
-  }, [userId]);
+    fetchData()
+  }, [userId])
 
-  // Totals
+
   const income = transactions
     .filter((t) => t.type === "income")
-    .reduce((a, b) => a + Number(b.amount), 0);
+    .reduce((a, b) => a + Number(b.amount), 0)
 
   const expense = transactions
     .filter((t) => t.type === "expense")
-    .reduce((a, b) => a + Number(b.amount), 0);
+    .reduce((a, b) => a + Number(b.amount), 0)
 
-  const savings = income - expense;
+  const savings = income - expense
 
-  // Pie chart for expenses by category
-  const categoryMap = {};
+  const categoryMap = {}
   transactions.forEach((t) => {
     if (t.type === "expense") {
-      categoryMap[t.category] = (categoryMap[t.category] || 0) + Number(t.amount);
+      categoryMap[t.category] = (categoryMap[t.category] || 0) + Number(t.amount)
     }
-  });
+  })
 
   const pieData = Object.keys(categoryMap).map((key) => ({
     name: key,
     value: categoryMap[key],
-  }));
-  const COLORS = ["#00C49F", "#FF4D4F", "#4F46E5", "#F59E0B", "#9333EA"];
+  }))
+  const COLORS = ["#00C49F", "#FF4D4F", "#4F46E5", "#F59E0B", "#9333EA"]
 
-  // Bar chart for Income vs Expense
+ 
   const barData = [
     { name: "Income", value: income },
     { name: "Expense", value: expense },
-  ];
+  ]
 
-  // Recent transactions
-  const recent = [...transactions].slice(-3).reverse();
 
-  // Total budget progress
-  const totalBudget = budgets.reduce((a, b) => a + Number(b.limit), 0);
-  const totalSpent = budgets.reduce((a, b) => a + Number(b.spent || 0), 0);
-  const budgetProgress = totalBudget ? ((totalSpent / totalBudget) * 100).toFixed(1) : 0;
+  const recent = [...transactions].slice(-3).reverse()
+
+
+  const totalBudget = budgets.reduce((a, b) => a + Number(b.limit), 0)
+  const totalSpent = budgets.reduce((a, b) => a + Number(b.spent || 0), 0)
+  const budgetProgress = totalBudget ? ((totalSpent / totalBudget) * 100).toFixed(1) : 0
 
   return (
     <>
@@ -122,11 +120,7 @@ export default function Dashboard() {
               <h2>{goals.length}</h2>
             </div>
 
-            <div className="card budgets">
-              <p>Total Budgets</p>
-              <h2>₹{totalBudget}</h2>
-              <p>Spent {budgetProgress}%</p>
-            </div>
+            
           </div>
         </div>
 
@@ -200,5 +194,5 @@ export default function Dashboard() {
         </div>
       </div>
     </>
-  );
+  )
 }

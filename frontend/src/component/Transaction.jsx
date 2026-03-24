@@ -1,128 +1,120 @@
-import { useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
-import "./styles.css";
+import { useState, useEffect } from "react"
+import toast, { Toaster } from "react-hot-toast"
+import axios from "axios"
+import "./styles.css"
 
 export default function Transaction() {
-  const [showForm, setShowForm] = useState(false);
-  const [transactions, setTransactions] = useState([]);
+  const [showForm, setShowForm] = useState(false)
+  const [transactions, setTransactions] = useState([])
   const [form, setForm] = useState({
     type: "expense",
     amount: "",
     category: "",
     date: "",
     description: "",
-  });
-  const [editAmounts, setEditAmounts] = useState({});
-
-  // Get logged-in userId
-  const userId = localStorage.getItem("userId");
+  })
+  const [editAmounts, setEditAmounts] = useState({})
+  const userId = localStorage.getItem("userId")
 
   useEffect(() => {
     if (!userId) {
-      toast.error("Please login first");
-      return;
+      toast.error("Please login first")
+      return
     }
 
     const fetchTransactions = async () => {
       try {
-        const res = await axios.get(`http://localhost:6087/transactions/${userId}`);
-        if (res.data.status) setTransactions(res.data.transactions);
-        else toast.error(res.data.message);
+        const res = await axios.get(`http://localhost:6087/transactions/${userId}`)
+        if (res.data.status) setTransactions(res.data.transactions)
+        else toast.error(res.data.message)
       } catch {
-        toast.error("Failed to fetch transactions");
+        toast.error("Failed to fetch transactions")
       }
-    };
+    }
+    fetchTransactions()
+  }, [userId])
 
-    fetchTransactions();
-  }, [userId]);
-
-  // Add transaction
   const handleAdd = async () => {
     if (!form.amount || !form.category || !form.date) {
-      return toast.error("Fill all required fields!");
+      return toast.error("Fill all required fields!")
     }
 
-    if (!userId) return toast.error("User not logged in");
+    if (!userId) return toast.error("User not logged in")
 
-    const toastId = toast.loading("Adding transaction...");
+    const toastId = toast.loading("Adding transaction...")
 
     try {
       const res = await axios.post("http://localhost:6087/transactions", {
         ...form,
         userId,
-      });
+      })
 
       if (res.data.status) {
-        setTransactions([...transactions, res.data.transaction]);
-        setForm({ type: "expense", amount: "", category: "", date: "", description: "" });
-        setShowForm(false);
-        toast.success("Transaction added!", { id: toastId });
+        setTransactions([...transactions, res.data.transaction])
+        setForm({ type: "expense", amount: "", category: "", date: "", description: "" })
+        setShowForm(false)
+        toast.success("Transaction added!", { id: toastId })
       } else {
-        toast.error(res.data.message, { id: toastId });
+        toast.error(res.data.message, { id: toastId })
       }
     } catch {
-      toast.error("Failed to add transaction", { id: toastId });
+      toast.error("Failed to add transaction", { id: toastId })
     }
-  };
+  }
 
-  // Update transaction
   const handleUpdate = async (t) => {
-    const amount = editAmounts[t._id];
-    if (!amount) return toast.error("Enter amount!");
-    if (!userId) return toast.error("User not logged in");
-
-    const toastId = toast.loading("Updating transaction...");
+    const amount = editAmounts[t._id]
+    if (!amount) return toast.error("Enter amount!")
+    if (!userId) return toast.error("User not logged in")
+    const toastId = toast.loading("Updating transaction...")
 
     try {
       const res = await axios.put(`http://localhost:6087/transactions/${t._id}`, {
         ...t,
         amount: Number(amount),
         userId,
-      });
+      })
 
       if (res.data.status) {
         setTransactions((prev) =>
           prev.map((tr) => (tr._id === res.data.transaction._id ? res.data.transaction : tr))
-        );
-        setEditAmounts((prev) => ({ ...prev, [t._id]: "" }));
-        toast.success("Transaction updated!", { id: toastId });
+        )
+        setEditAmounts((prev) => ({ ...prev, [t._id]: "" }))
+        toast.success("Transaction updated!", { id: toastId })
       } else {
-        toast.error(res.data.message, { id: toastId });
+        toast.error(res.data.message, { id: toastId })
       }
     } catch {
-      toast.error("Failed to update transaction", { id: toastId });
+      toast.error("Failed to update transaction", { id: toastId })
     }
-  };
+  }
 
-  // Delete transaction
+
   const handleDelete = async (id) => {
-    if (!userId) return toast.error("User not logged in");
-    const toastId = toast.loading("Deleting transaction...");
+    if (!userId) return toast.error("User not logged in")
+    const toastId = toast.loading("Deleting transaction...")
 
     try {
-      const res = await axios.delete(`http://localhost:6087/transactions/${id}/${userId}`);
+      const res = await axios.delete(`http://localhost:6087/transactions/${id}/${userId}`)
       if (res.data.status) {
-        setTransactions((prev) => prev.filter((t) => t._id !== id));
-        toast.success("Transaction deleted!", { id: toastId });
+        setTransactions((prev) => prev.filter((t) => t._id !== id))
+        toast.success("Transaction deleted!", { id: toastId })
       } else {
-        toast.error(res.data.message, { id: toastId });
+        toast.error(res.data.message, { id: toastId })
       }
     } catch {
-      toast.error("Failed to delete transaction", { id: toastId });
+      toast.error("Failed to delete transaction", { id: toastId })
     }
-  };
-
-  // Totals
+  }
   const income = transactions
     .filter((t) => t.type === "income")
-    .reduce((a, b) => a + Number(b.amount), 0);
+    .reduce((a, b) => a + Number(b.amount), 0)
 
   const expense = transactions
     .filter((t) => t.type === "expense")
-    .reduce((a, b) => a + Number(b.amount), 0);
+    .reduce((a, b) => a + Number(b.amount), 0)
 
-  const balance = income - expense;
+  const balance = income - expense
 
   return (
     <>
@@ -156,8 +148,7 @@ export default function Transaction() {
           </div>
         </div>
 
-        {/* Form */}
-        {showForm && (
+              {showForm && (
           <div className="form">
             <div className="form-header">
               <h3>+ New Transaction</h3>
@@ -222,8 +213,6 @@ export default function Transaction() {
             </div>
           </div>
         )}
-
-        {/* Transaction History */}
         <div className="history">
           <h4>Transaction History</h4>
           {transactions.length === 0 ? (
@@ -281,5 +270,5 @@ export default function Transaction() {
         </div>
       </div>
     </>
-  );
+  )
 }

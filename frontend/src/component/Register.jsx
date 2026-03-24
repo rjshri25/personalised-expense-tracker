@@ -1,41 +1,41 @@
-import { NavLink } from 'react-router-dom';
-import './styles.css';
-import { useForm } from 'react-hook-form';
-import { useEffect } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
-import axios from 'axios';
+import { NavLink } from 'react-router-dom'
+import './styles.css'
+import { useForm } from 'react-hook-form'
+import { useEffect } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
+import axios from 'axios'
 
 export default function Register(){
-const{register,handleSubmit,setFocus,setValue,watch,formState:{errors}}=useForm();
+const{register,handleSubmit,setFocus,setValue,watch,formState:{errors}}=useForm()
 
 const onFormSubmit=async(data)=>{
-toast.loading('Registering user',{id:'loader'});
+toast.loading('Registering user',{id:'loader'})
 try{
-const res=await axios.post('http://localhost:6087/register',data);
-const resData=res.data;
+const res=await axios.post('http://localhost:6087/register',data)
+const resData=res.data
 if(resData.status){
-toast.success(resData.message,{id:'loader'});
-setValue('fullName','');
-setValue('email','');
-setValue('password','');
-setValue('confirmpassword','');
+toast.success(resData.message,{id:'loader'})
+setValue('fullName','')
+setValue('email','')
+setValue('password','')
+setValue('confirmpassword','')
 }
 else{
-toast.error(resData.message,{id:'loader'});
+toast.error(resData.message,{id:'loader'})
 if(resData.message==='user exists!!'){
-setValue('email','');
-setFocus('email');
+setValue('email','')
+setFocus('email')
 }
 }
 }catch{
-toast.error('Something went wrong',{id:'loader'});
+toast.error('Something went wrong',{id:'loader'})
 }
-};
+}
 
-const password=watch('password');
+const password=watch('password')
 useEffect(()=>{
-setFocus('fullName');
-},[]);
+setFocus('fullName')
+},[])
 
 return(
 <>
@@ -135,5 +135,5 @@ Already have an account? <NavLink to="/">Login</NavLink>
 </div>
 </div>
 </>
-);
+)
 }

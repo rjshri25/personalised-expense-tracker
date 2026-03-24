@@ -1,4 +1,3 @@
-/*Login Page  */
 .login-container {
   height: 100vh;
   display: flex;
@@ -91,7 +90,6 @@ button:hover {
   margin-top: 10px;
 }
 
-/* MenuBar */
 .Menu {
   background-color: rgba(204, 176, 230, 0.11);
   width: 250px; 
@@ -410,9 +408,6 @@ button:hover {
   width: 120px;
 }
 
-/* =========================
-   History / Transaction List
-   ========================= */
 .history {
   margin-top: 20px;
 }
@@ -502,9 +497,6 @@ button:hover {
   color: #9ca3af;
 }
 
-/* =========================
-   Savings Goals
-   ========================= */
 .savings-cards {
   display: flex;
   gap: 20px;
@@ -581,9 +573,6 @@ button:hover {
   color: white;
 }
 
-/* =========================
-   Budget Cards
-   ========================= */
 .budget-cards {
   display: flex;
   gap: 20px;
@@ -660,9 +649,6 @@ button:hover {
   color: white;
 }
 
-/* =========================
-   Calendar
-   ========================= */
 .calendar-nav {
   display: flex;
   align-items: center;
@@ -753,9 +739,6 @@ button:hover {
   font-size: 12px;
 }
 
-/* =========================
-   Simple Cards
-   ========================= */
 .simple-card {
   flex: 1;
   background: whitesmoke;
@@ -783,9 +766,6 @@ button:hover {
   font-weight: bold;
 }
 
-/* =========================
-   Dashboard Layout
-   ========================= */
 .dashboard-layout {
   display: flex;
   height: 100vh;
@@ -800,9 +780,6 @@ button:hover {
   overflow-y: auto;
 }
 
-/* =========================
-   Dashboard Header
-   ========================= */
 .dashboard-container {
   display: flex;
   flex-direction: column;
@@ -829,9 +806,6 @@ button:hover {
   margin: 0;
 }
 
-/* =========================
-   Dashboard Cards
-   ========================= */
 .dashboard-main .cards {
   display: flex;
   flex-wrap: wrap;
@@ -869,7 +843,6 @@ button:hover {
   background: linear-gradient(135deg, #3b82f6, #2563eb); /* blue gradient */
 }
 
-/* Hover effect */
 .dashboard-main .cards .card:hover,
 .dashboard-main .cards .card1:hover,
 .dashboard-main .cards .card2:hover,
@@ -878,7 +851,6 @@ button:hover {
   box-shadow: 0 8px 18px rgba(0,0,0,0.2);
 }
 
-/* Card text */
 .dashboard-main .cards .card h4,
 .dashboard-main .cards .card1 h4,
 .dashboard-main .cards .card2 h4,
@@ -896,10 +868,6 @@ button:hover {
   font-size: 18px;
   font-weight: 700;
 }
-
-/* =========================
-   Chart Box
-   ========================= */
 .chart-box {
   background: linear-gradient(135deg, #ede9fe, #c7d2fe);
   padding: 20px;
@@ -907,10 +875,6 @@ button:hover {
   border: 1px solid #e9d5ff;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
-
-/* =========================
-   Side Panel Cards
-   ========================= */
 .side-panel .panel-card {
   background: linear-gradient(135deg, #fbcfe8, #f472b6);
   padding: 20px;
@@ -996,5 +960,5 @@ body {
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #6366f1, #4f46e5);
-  border-radius: 10px;
+  border-radius: 10px
 }

@@ -1,25 +1,23 @@
-const express = require("express");
-const bcrypt = require("bcrypt");
-const User = require("../models/User");
+const express = require("express")
+const bcrypt = require("bcrypt")
+const User = require("../models/User")
 
-const router = express.Router();
+const router = express.Router()
 
 router.post("/", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body
 
   if (!email || !password)
-    return res.send({ status: false, message: "Email and password required" });
+    return res.send({ status: false, message: "Email and password required" })
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email })
     if (!user)
-      return res.send({ status: false, message: "User not found" });
+      return res.send({ status: false, message: "User not found" })
 
-    const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(password, user.password)
     if (!match)
-      return res.send({ status: false, message: "Incorrect password" });
-
-    // ✅ Send only one response with _id included
+      return res.send({ status: false, message: "Incorrect password" })
     res.send({
       status: true,
       message: "Login successful",
@@ -28,11 +26,11 @@ router.post("/", async (req, res) => {
         fullName: user.fullName,
         email: user.email
       }
-    });
+    })
   } catch (err) {
     console.error(err);
-    res.send({ status: false, message: "Login failed" });
+    res.send({ status: false, message: "Login failed" })
   }
-});
+})
 
-module.exports = router;
+module.exports = router

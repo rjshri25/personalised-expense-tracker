@@ -1,9 +1,9 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import "./styles.css";
-import { useForm } from "react-hook-form";
-import { useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
+import { NavLink, useNavigate } from "react-router-dom"
+import "./styles.css"
+import { useForm } from "react-hook-form"
+import { useEffect } from "react"
+import toast, { Toaster } from "react-hot-toast"
+import axios from "axios"
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,40 +14,33 @@ export default function Login() {
     setFocus,
     formState: { errors },
     reset
-  } = useForm();
+  } = useForm()
 
-  // Handle form submit
+ 
   const onFormSubmit = async (data) => {
-    toast.loading("Logging in...", { id: "login" });
+    toast.loading("Logging in...", { id: "login" })
 
     try {
-      const res = await axios.post("http://localhost:6087/login", data);
-      const resData = res.data;
+      const res = await axios.post("http://localhost:6087/login", data)
+      const resData = res.data
 
       if (resData.status) {
-        toast.success(resData.message, { id: "login" });
-
-        // Save full user info
-        localStorage.setItem("user", JSON.stringify(resData.user));
-
-        // Save userId separately for transactions
-        localStorage.setItem("userId", resData.user._id);
-
-        reset(); // reset form fields
-        navigate("/dashboard"); // navigate on success
+        toast.success(resData.message, { id: "login" })
+        localStorage.setItem("user", JSON.stringify(resData.user))
+        localStorage.setItem("userId", resData.user._id)
+        reset()
+        navigate("/dashboard")
       } else {
-        toast.error(resData.message, { id: "login" });
+        toast.error(resData.message, { id: "login" })
       }
     } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong", { id: "login" });
+      console.error(err)
+      toast.error("Something went wrong", { id: "login" })
     }
-  };
-
-  // Focus on email field on load
+  }
   useEffect(() => {
-    setFocus("email");
-  }, []);
+    setFocus("email")
+  }, [])
 
   return (
     <>
@@ -55,7 +48,6 @@ export default function Login() {
 
       <div className="login-container">
         <div className="login-layout">
-          {/* LEFT PANEL */}
           <div className="login-left">
             <div className="overlay">
               <h1>Welcome Back 👋</h1>
@@ -63,7 +55,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* RIGHT PANEL */}
           <div className="login-right">
             <form onSubmit={handleSubmit(onFormSubmit)} className="login-card">
               <h2>Login</h2>
@@ -113,5 +104,5 @@ export default function Login() {
         </div>
       </div>
     </>
-  );
+  )
 }
