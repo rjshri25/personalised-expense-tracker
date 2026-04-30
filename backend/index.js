@@ -1,13 +1,15 @@
+require("dotenv").config()
 const express=require('express')
+
 const bodyParser=require('body-parser')
 const cors=require('cors')
 const mongoose=require('mongoose')
 
-const URL = 'mongodb://localhost:27017/expenseTracker'
+const { connectDB } = require('./db')
+connectDB()
 
-mongoose.connect(URL)
-  .then(() => console.log('Mongodb Database connected!!'))
-  .catch((err) => console.log('Database not connected', err))
+
+console.log("MONGO_URI:", process.env.MONGO_URI)
 
 const server=express()
 server.use(bodyParser.json())
@@ -33,6 +35,6 @@ server.listen(6087,
     ()=>
     {
     console.log("Server is in listening mode!!!")
-    }
-    
+    }   
 )
+ 
