@@ -1,13 +1,14 @@
 {
   "name": "backend1",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend server for MERN application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Rajashri Mali",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -15,6 +16,10 @@
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
     "express": "^5.1.0",
+    "mongodb": "^7.2.0",
     "mongoose": "^8.19.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
