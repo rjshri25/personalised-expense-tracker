@@ -79,9 +79,6 @@ Personalised Expense Tracker
 ## 🚀 Future Improvements
 
 * AI-based spending insights 🤖
-* Budget alerts & notifications 🔔
-* Export expense reports (PDF)
-* Authentication (Login/Signup)
 
 ---
 
@@ -89,7 +86,7 @@ Personalised Expense Tracker
 
 **Rajashri Mali**
 
-* GitHub: [https://github.com/rjshri25](https://github.com/rjshri25
+* GitHub: [https://github.com/rjshri25](https://github.com/rjshri25)
 
 ---
 
