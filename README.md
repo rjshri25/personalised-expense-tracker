@@ -6,7 +6,7 @@ A full-stack web application to track daily expenses, manage monthly budgets, an
 
 ## 🚀 Live Demo
 
-👉 [https://your-deployed-link.netlify.app](https://personalisedexpensetracker.netlify.app)
+👉 [https://personalisedexpensetracker.netlify.app](https://personalisedexpensetracker.netlify.app)
 
 ---
 
@@ -88,9 +88,6 @@ Personalised Expense Tracker
 
 * GitHub: [https://github.com/rjshri25](https://github.com/rjshri25)
 
----
-
-## ⭐ If you like this project
 
 Give it a ⭐ on GitHub — it motivates me to build more!
 
