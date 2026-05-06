@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import toast, { Toaster } from "react-hot-toast"
 import axios from "axios"
 import "./styles.css"
+import api from "../api"
 
 export default function Budget() {
   const [showForm, setShowForm] = useState(false)
@@ -19,7 +20,7 @@ export default function Budget() {
 
     const fetchBudgets = async () => {
       try {
-        const res = await axios.get(`http://localhost:6087/budgets/${userId}`)
+         const res = await api.get(`/budgets/${userId}`);
         if (res.data.status) setBudgets(res.data.budgets)
         else toast.error(res.data.message)
       } catch {
@@ -31,17 +32,18 @@ export default function Budget() {
   }, [userId])
 
   const handleAdd = async () => {
-    if (!form.category || !form.limit || !form.month)
-      return toast.error("Fill all required fields!")
+  if (!form.category || !form.limit || !form.month)
+    return toast.error("Fill all required fields!")
 
-    if (!userId) return toast.error("User not logged in")
+  if (!userId) return toast.error("User not logged in")
 
-    const toastId = toast.loading("Adding budget...")
-    try {
-      const res = await axios.post("http://localhost:6087/budgets", {
-        ...form,
-        userId,
-      })
+  const toastId = toast.loading("Adding budget...")
+
+  try {
+    const res = await api.post("/budgets", {
+      ...form,
+      userId,
+    })
 
       if (res.data.status) {
         setBudgets([...budgets, res.data.budget])
@@ -64,7 +66,7 @@ export default function Budget() {
     const toastId = toast.loading("Updating budget...")
 
     try {
-      const res = await axios.put(`http://localhost:6087/budgets/${b._id}`, {
+      const res = await api.put(`/budgets/${b._id}`, {
         spent: amount,
         userId,
       })
@@ -92,7 +94,7 @@ export default function Budget() {
     if (!userId) return toast.error("User not logged in")
     const toastId = toast.loading("Deleting budget...")
     try {
-      await axios.delete(`http://localhost:6087/budgets/${id}/${userId}`)
+      await api.delete(`/budgets/${id}/${userId}`)
       setBudgets((prev) => prev.filter((b) => b._id !== id))
       toast.success("Budget deleted!", { id: toastId })
     } catch {

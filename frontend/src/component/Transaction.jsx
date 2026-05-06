@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import toast, { Toaster } from "react-hot-toast"
 import axios from "axios"
 import "./styles.css"
+import api from "../api"
+
 
 export default function Transaction() {
   const [showForm, setShowForm] = useState(false)
@@ -24,7 +26,7 @@ export default function Transaction() {
 
     const fetchTransactions = async () => {
       try {
-        const res = await axios.get(`http://localhost:6087/transactions/${userId}`)
+        const res = await api.get(`/transactions/${userId}`)
         if (res.data.status) setTransactions(res.data.transactions)
         else toast.error(res.data.message)
       } catch {
@@ -44,7 +46,7 @@ export default function Transaction() {
     const toastId = toast.loading("Adding transaction...")
 
     try {
-      const res = await axios.post("http://localhost:6087/transactions", {
+      const res = await api.post("/transactions", {
         ...form,
         userId,
       })
@@ -69,7 +71,7 @@ export default function Transaction() {
     const toastId = toast.loading("Updating transaction...")
 
     try {
-      const res = await axios.put(`http://localhost:6087/transactions/${t._id}`, {
+      const res = await api.put(`/transactions/${t._id}`, {
         ...t,
         amount: Number(amount),
         userId,
@@ -95,7 +97,7 @@ export default function Transaction() {
     const toastId = toast.loading("Deleting transaction...")
 
     try {
-      const res = await axios.delete(`http://localhost:6087/transactions/${id}/${userId}`)
+      const res = await api.delete(`/transactions/${id}/${userId}`)
       if (res.data.status) {
         setTransactions((prev) => prev.filter((t) => t._id !== id))
         toast.success("Transaction deleted!", { id: toastId })

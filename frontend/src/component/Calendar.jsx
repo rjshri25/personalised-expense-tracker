@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import axios from "axios"
 import toast, { Toaster } from "react-hot-toast"
 import "./styles.css"
+import api from "../api"
 
 const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
@@ -24,7 +25,7 @@ export default function Calendar() {
 
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:6087/transactions/calendar/${userId}`)
+        const res = await api.get(`/transactions/calendar/${userId}`)
         if (res.data.status) setTransactions(res.data.transactions)
         else toast.error(res.data.message)
       } catch {

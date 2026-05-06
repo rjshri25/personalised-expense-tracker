@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { useEffect } from "react"
 import toast, { Toaster } from "react-hot-toast"
 import axios from "axios"
+import api from "../api"
 
 export default function Login() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function Login() {
     toast.loading("Logging in...", { id: "login" })
 
     try {
-      const res = await axios.post("http://localhost:6087/login", data)
+      const res = await api.post("/login", data)
       const resData = res.data
 
       if (resData.status) {

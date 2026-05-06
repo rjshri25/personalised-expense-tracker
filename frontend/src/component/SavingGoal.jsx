@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import toast, { Toaster } from "react-hot-toast"
 import axios from "axios"
 import "./styles.css"
+import api from "../api"
 
 export default function SavingGoals() {
   const [showForm, setShowForm] = useState(false)
@@ -24,7 +25,7 @@ export default function SavingGoals() {
 
     const fetchGoals = async () => {
       try {
-        const res = await axios.get(`http://localhost:6087/goals/${userId}`)
+        const res = await api.get(`/goals/${userId}`)
         if (res.data.status) setGoals(res.data.goals)
         else toast.error(res.data.message)
       } catch (err) {
@@ -44,7 +45,7 @@ export default function SavingGoals() {
 
     const toastId = toast.loading("Adding goal...")
     try {
-      const res = await axios.post("http://localhost:6087/goals", newGoal)
+      const res = await api.post("/goals", newGoal)
       if (res.data.status) {
         setGoals([...goals, res.data.goal])
         setForm({ title: "", target: "", current: "", date: "" })
@@ -68,7 +69,7 @@ export default function SavingGoals() {
 
     const toastId = toast.loading("Updating goal...")
     try {
-      const res = await axios.put(`http://localhost:6087/goals/${goal._id}`, {
+      const res = await api.put(`/goals/${goal._id}`, {
         ...goal,
         current: newCurrent,
         progress,
@@ -91,7 +92,7 @@ export default function SavingGoals() {
 
     const toastId = toast.loading("Deleting goal...")
     try {
-      const res = await axios.delete(`http://localhost:6087/goals/${id}/${userId}`)
+      const res = await api.delete(`/goals/${id}/${userId}`)
       if (res.data.status) {
         setGoals((prev) => prev.filter((g) => g._id !== id))
         toast.success("Goal deleted!", { id: toastId })

@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import axios from 'axios'
+import api from '../api'
 
 export default function Register(){
 const{register,handleSubmit,setFocus,setValue,watch,formState:{errors}}=useForm()
@@ -11,7 +12,7 @@ const{register,handleSubmit,setFocus,setValue,watch,formState:{errors}}=useForm(
 const onFormSubmit=async(data)=>{
 toast.loading('Registering user',{id:'loader'})
 try{
-const res=await axios.post('http://localhost:6087/register',data)
+const res=await api.post('/register',data)
 const resData=res.data
 if(resData.status){
 toast.success(resData.message,{id:'loader'})

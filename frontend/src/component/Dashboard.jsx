@@ -14,6 +14,7 @@ import {
 } from "recharts"
 import toast, { Toaster } from "react-hot-toast"
 import "./styles.css"
+import api from "../api"
 
 export default function Dashboard() {
   const [transactions, setTransactions] = useState([])
@@ -31,9 +32,9 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         const [transRes, goalsRes, budgetsRes] = await Promise.all([
-          axios.get(`http://localhost:6087/transactions/${userId}`),
-          axios.get(`http://localhost:6087/goals/${userId}`),
-          axios.get(`http://localhost:6087/budgets/${userId}`),
+          api.get(`/transactions/${userId}`),
+          api.get(`/goals/${userId}`),
+          api.get(`/budgets/${userId}`),
         ])
 
         if (transRes.data.status) setTransactions(transRes.data.transactions || [])
